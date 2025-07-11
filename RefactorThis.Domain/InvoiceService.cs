@@ -70,19 +70,20 @@ namespace RefactorThis.Domain
 
         private void ApplyPayment(Invoice inv, Payment payment, bool isInstallment, bool applyTax)
         {
+            inv.AmountPaid = isInstallment ? inv.AmountPaid + payment.Amount : payment.Amount;
+            const decimal standardTaxRate = 0.1m;
+            const decimal commercialTaxRate = 0.14m;
             switch (inv.Type)
             {
-                case InvoiceType.Standard:
-                    inv.AmountPaid = isInstallment ? inv.AmountPaid + payment.Amount : payment.Amount;
+                case InvoiceType.Standard:                    
                     if (applyTax)
-                        inv.TaxAmount = payment.Amount * 0.1m;
+                        inv.TaxAmount = payment.Amount * standardTaxRate;
 
                     inv.Payments.Add(payment);
                     break;
 
                 case InvoiceType.Commercial:
-                    inv.AmountPaid = isInstallment ? inv.AmountPaid + payment.Amount : payment.Amount;
-                    inv.TaxAmount = payment.Amount * 0.14m;
+                    inv.TaxAmount = payment.Amount * commercialTaxRate;
                     inv.Payments.Add(payment);
                     break;
 
